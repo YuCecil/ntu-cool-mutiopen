@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>NTU COOL 批次開啟</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    textarea { width: 100%; height: 150px; box-sizing: border-box; }
+    select, button, input[type="text"] { margin-top: 1rem; padding: 0.5rem; }
+    #customSuffixInput { display: none; width: calc(100% - 1rem); }
+  </style>
+</head>
+<body>
+  <h2>NTU COOL 批次開啟工具</h2>
+
+  <p>請貼上所有課程網址（逗號或換行分隔）：</p>
+  <textarea id="urlList" placeholder="https://cool.ntu.edu.tw/courses/1234,&#10;https://cool.ntu.edu.tw/courses/5678"></textarea>
+
+  <p>選擇要開啟的頁面：</p>
+  <select id="suffix">
+    <option value="">課程首頁</option>
+    <option value="/modules">課程內容</option>
+    <option value="/gradebook">成績</option>
+    <option value="/users">成員</option>
+    <option value="/assignments">作業</option>
+    <option value="/discussion_topics">討論</option>
+    <option value="/quizzes">測驗</option>
+    <option value="/settings">設定</option>
+    <option value="/settings/configurations#tab-details">設定‑詳細資訊</option>
+    <option value="/settings/configurations#tab-sections">設定‑班別</option>
+    <option value="custom">自行貼上後綴</option>
+  </select>
+  <input type="text" id="customSuffixInput" placeholder="請輸入自訂後綴（例如 /modules，即課號後的所有內容）" />
+
+  <br />
+  <button id="openBtn">一鍵開啟所有連結</button>
+
+  <script>
+    const suffixSelect = document.getElementById('suffix');
+    const customInput = document.getElementById('customSuffixInput');
+    const urlList = document.getElementById('urlList');
+
+    // 根據選擇顯示或隱藏自訂後綴輸入框
+    suffixSelect.addEventListener('change', () => {
+      customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('openBtn').addEventListener('click', () => {
+      const raw = urlList.value;
+      let suffix = suffixSelect.value;
+
+      // 處理自訂後綴
+      if (suffix === 'custom') {
+        let c = customInput.value.trim();
+        if (!c) {
+          alert('請輸入自訂後綴');
+          return;
+        }
+        // 確保前綴斜線或雜湊符號
+        if (!c.startsWith('/') && !c.startsWith('#')) c = '/' + c;
+        suffix = c;
+      }
+
+      // 解析並過濾 URL
+      const entries = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+      const urls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
+
+      if (!urls.length) {
+        alert('請至少輸入一個有效的 COOL 課程連結');
+        return;
+      }
+
+      // 批次開啟分頁
+      urls.forEach((u, i) => {
+        let urlObj;
+        try {
+          urlObj = new URL(u);
+        } catch (e) {
+          urlObj = new URL('https://' + u.replace(/^\/+/, ''));
+        }
+
+        // 處理後綴含雜湊 (hash) 的情況
+        if (suffix.includes('#')) {
+          const [pathSuffix, frag] = suffix.split('#');
+          urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + (pathSuffix || '');
+          urlObj.hash = '#' + frag;
+        } else {
+          urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + suffix;
+        }
+
+        setTimeout(() => {
+          window.open(urlObj.href, '_blank');
+        }, i * 500);
+      });
+    });
+  </script>
+</body>
+</html>
