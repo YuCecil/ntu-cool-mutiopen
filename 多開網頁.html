@@ -2,19 +2,72 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>NTU COOL 批次開啟</title>
+  <title>NTU COOL 多開課程網頁</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    textarea { width: 100%; height: 150px; box-sizing: border-box; }
-    select, button, input[type="text"] { margin-top: 1rem; padding: 0.5rem; }
+    /* 淺粉色系 */
+    :root {
+      --pink-bg:     #fff5f9;  /* 最淺背景 */
+      --pink-border: #ffb6d2;  /* 邊框／表單背景 */
+      --pink-btn:    #ffc7db;  /* 按鈕背景 */
+      --pink-hover:  #ff9fbe;  /* 滑入背景 */
+      --pink-title:  #d6336c;  /* 標題與強調字 */
+    }
+
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: var(--pink-bg);
+      color: #333;
+      padding: 2rem;
+    }
+
+    h2 { color: var(--pink-title); }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      box-sizing: border-box;
+      border: 1px solid var(--pink-border);
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    select, button, input[type="text"] {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border: 1px solid var(--pink-border);
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    button {
+      background: var(--pink-btn);
+      color: #333;
+      cursor: pointer;
+    }
+    button:hover { background: var(--pink-hover); }
+
     #customSuffixInput { display: none; width: calc(100% - 1rem); }
+
+    /* 貓咪圖片區 */
+    #catContainer {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    #catContainer img {
+      max-width: 200px;
+      border-radius: 8px;
+      border: 1px solid var(--pink-border);
+    }
   </style>
 </head>
 <body>
-  <h2>NTU COOL 批次開啟工具</h2>
+  <h2>NTU COOL 多開課程網頁</h2>
 
   <p>請貼上所有課程網址（逗號或換行分隔）：</p>
-  <textarea id="urlList" placeholder="https://cool.ntu.edu.tw/courses/1234,&#10;https://cool.ntu.edu.tw/courses/5678"></textarea>
+  <textarea id="urlList" placeholder="https://cool.ntu.edu.tw/courses/1234,
+https://cool.ntu.edu.tw/courses/5678"></textarea>
 
   <p>選擇要開啟的頁面：</p>
   <select id="suffix">
@@ -35,12 +88,16 @@
   <br />
   <button id="openBtn">一鍵開啟所有連結</button>
 
-  <script>
-    const suffixSelect = document.getElementById('suffix');
-    const customInput = document.getElementById('customSuffixInput');
-    const urlList = document.getElementById('urlList');
+  <!-- 新增：貓貓生成器 -->
+  <button id="catBtn">萌貓貓來兩張</button>
+  <div id="catContainer"></div>
 
-    // 根據選擇顯示或隱藏自訂後綴輸入框
+  <script>
+    // === 原有批次開頁功能 ===
+    const suffixSelect = document.getElementById('suffix');
+    const customInput  = document.getElementById('customSuffixInput');
+    const urlList      = document.getElementById('urlList');
+
     suffixSelect.addEventListener('change', () => {
       customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
     });
@@ -49,37 +106,22 @@
       const raw = urlList.value;
       let suffix = suffixSelect.value;
 
-      // 處理自訂後綴
       if (suffix === 'custom') {
         let c = customInput.value.trim();
-        if (!c) {
-          alert('請輸入自訂後綴');
-          return;
-        }
-        // 確保前綴斜線或雜湊符號
+        if (!c) { alert('請輸入自訂後綴'); return; }
         if (!c.startsWith('/') && !c.startsWith('#')) c = '/' + c;
         suffix = c;
       }
 
-      // 解析並過濾 URL
       const entries = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
       const urls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
+      if (!urls.length) { alert('請至少輸入一個有效的 COOL 課程連結'); return; }
 
-      if (!urls.length) {
-        alert('請至少輸入一個有效的 COOL 課程連結');
-        return;
-      }
-
-      // 批次開啟分頁
       urls.forEach((u, i) => {
         let urlObj;
-        try {
-          urlObj = new URL(u);
-        } catch (e) {
-          urlObj = new URL('https://' + u.replace(/^\/+/, ''));
-        }
+        try { urlObj = new URL(u); }
+        catch { urlObj = new URL('https://' + u.replace(/^\/+/, '')); }
 
-        // 處理後綴含雜湊 (hash) 的情況
         if (suffix.includes('#')) {
           const [pathSuffix, frag] = suffix.split('#');
           urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + (pathSuffix || '');
@@ -88,10 +130,37 @@
           urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + suffix;
         }
 
-        setTimeout(() => {
-          window.open(urlObj.href, '_blank');
-        }, i * 500);
+        setTimeout(() => { window.open(urlObj.href, '_blank'); }, i * 500);
       });
+    });
+
+    // === 貓貓生成器 ===
+    const catBtn       = document.getElementById('catBtn');
+    const catContainer = document.getElementById('catContainer');
+
+    catBtn.addEventListener('click', async () => {
+      catContainer.textContent = '載入中…';
+
+      // 用 URL 物件產生查詢字串，避免轉義問題
+      const apiUrl = new URL('https://api.thecatapi.com/v1/images/search');
+      apiUrl.searchParams.set('limit', '2');            // 固定只取兩張
+      apiUrl.searchParams.set('mime_types', 'jpg,png'); // 避免 GIF 太大
+
+      try {
+        const res  = await fetch(apiUrl.href);
+        const data = await res.json();      // 回傳陣列
+
+        catContainer.innerHTML = '';
+        data.slice(0, 2).forEach(item => {  // 再次保險，只顯示兩張
+          const img = document.createElement('img');
+          img.src   = item.url;
+          img.alt   = 'cute cat';
+          catContainer.appendChild(img);
+        });
+      } catch (err) {
+        console.error(err);
+        catContainer.textContent = '載入失敗，請稍後再試';
+      }
     });
   </script>
 </body>
