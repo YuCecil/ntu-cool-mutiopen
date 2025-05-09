@@ -2,15 +2,14 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>NTU COOL 多開課程網頁</title>
+  <title>NTU COOL 多開課程網頁</title>
   <style>
-    /* 淺粉色系 */
     :root {
-      --pink-bg:     #fff5f9;  /* 最淺背景 */
-      --pink-border: #ffb6d2;  /* 邊框／表單背景 */
-      --pink-btn:    #ffc7db;  /* 按鈕背景 */
-      --pink-hover:  #ff9fbe;  /* 滑入背景 */
-      --pink-title:  #d6336c;  /* 標題與強調字 */
+      --pink-bg:     #fff5f9;
+      --pink-border: #ffb6d2;
+      --pink-btn:    #ffc7db;
+      --pink-hover:  #ff9fbe;
+      --pink-title:  #d6336c;
     }
 
     body {
@@ -48,7 +47,6 @@
 
     #customSuffixInput { display: none; width: calc(100% - 1rem); }
 
-    /* 貓咪圖片區 */
     #catContainer {
       margin-top: 1.5rem;
       display: flex;
@@ -63,37 +61,40 @@
   </style>
 </head>
 <body>
-  <h2>NTU COOL 多開課程網頁</h2>
+  <h2>NTU COOL 多開課程網頁</h2>
 
-  <p>請貼上所有課程網址（逗號或換行分隔）：</p>
-  <textarea id="urlList" placeholder="https://cool.ntu.edu.tw/courses/1234,
-https://cool.ntu.edu.tw/courses/5678"></textarea>
+  <p>請貼上所有課程網址或學號（逗號或換行分隔）：</p>
+  <textarea id="urlList" placeholder="https://cool.ntu.edu.tw/courses/1234"></textarea>
 
   <p>選擇要開啟的頁面：</p>
   <select id="suffix">
-    <option value="">課程首頁</option>
-    <option value="/modules">課程內容</option>
-    <option value="/gradebook">成績</option>
-    <option value="/users">成員</option>
-    <option value="/assignments">作業</option>
-    <option value="/discussion_topics">討論</option>
-    <option value="/quizzes">測驗</option>
-    <option value="/settings">設定</option>
-    <option value="/settings/configurations#tab-details">設定‑詳細資訊</option>
-    <option value="/settings/configurations#tab-sections">設定‑班別</option>
-    <option value="custom">自行貼上後綴</option>
+    <optgroup label="➤ 課程網址（以 /courses/ 開頭）">
+      <option value="">課程首頁</option>
+      <option value="/modules">課程內容</option>
+      <option value="/gradebook">成績</option>
+      <option value="/users">成員</option>
+      <option value="/assignments">作業</option>
+      <option value="/discussion_topics">討論</option>
+      <option value="/quizzes">測驗</option>
+      <option value="/settings">設定</option>
+      <option value="/settings/configurations#tab-details">設定‑詳細資訊</option>
+      <option value="/settings/configurations#tab-sections">設定‑班別</option>
+      <option value="custom">自行貼上後綴</option>
+    </optgroup>
+    <optgroup label="➤ 學號搜尋（只需學號或 email）">
+      <option value="search-users">搜尋成員（學號或信箱皆可）</option>
+    </optgroup>
   </select>
-  <input type="text" id="customSuffixInput" placeholder="請輸入自訂後綴（例如 /modules，即課號後的所有內容）" />
+  <input type="text" id="customSuffixInput" placeholder="請輸入自訂後綴（例如 /modules）" />
 
   <br />
   <button id="openBtn">一鍵開啟所有連結</button>
 
-  <!-- 新增：貓貓生成器 -->
+  <!-- 貓貓生成器 -->
   <button id="catBtn">萌貓貓來兩張</button>
   <div id="catContainer"></div>
 
   <script>
-    // === 原有批次開頁功能 ===
     const suffixSelect = document.getElementById('suffix');
     const customInput  = document.getElementById('customSuffixInput');
     const urlList      = document.getElementById('urlList');
@@ -106,6 +107,22 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
       const raw = urlList.value;
       let suffix = suffixSelect.value;
 
+      if (!raw.trim()) {
+        alert('請輸入至少一筆資料');
+        return;
+      }
+
+      const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+
+      if (suffix === 'search-users') {
+        entries.forEach((id, i) => {
+          const cleanId = id.includes('@') ? id.split('@')[0] : id;
+          const url = `https://cool.ntu.edu.tw/accounts/1/users?search_term=${encodeURIComponent(cleanId)}&role_filter_id=&page=`;
+          setTimeout(() => { window.open(url, '_blank'); }, i * 500);
+        });
+        return;
+      }
+
       if (suffix === 'custom') {
         let c = customInput.value.trim();
         if (!c) { alert('請輸入自訂後綴'); return; }
@@ -113,7 +130,6 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
         suffix = c;
       }
 
-      const entries = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
       const urls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
       if (!urls.length) { alert('請至少輸入一個有效的 COOL 課程連結'); return; }
 
@@ -134,27 +150,25 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
       });
     });
 
-    // === 貓貓生成器 ===
-    const catBtn       = document.getElementById('catBtn');
+    // 萌貓貓生成器
+    const catBtn = document.getElementById('catBtn');
     const catContainer = document.getElementById('catContainer');
 
     catBtn.addEventListener('click', async () => {
       catContainer.textContent = '載入中…';
-
-      // 用 URL 物件產生查詢字串，避免轉義問題
       const apiUrl = new URL('https://api.thecatapi.com/v1/images/search');
-      apiUrl.searchParams.set('limit', '2');            // 固定只取兩張
-      apiUrl.searchParams.set('mime_types', 'jpg,png'); // 避免 GIF 太大
+      apiUrl.searchParams.set('limit', '2');
+      apiUrl.searchParams.set('mime_types', 'jpg,png');
 
       try {
-        const res  = await fetch(apiUrl.href);
-        const data = await res.json();      // 回傳陣列
+        const res = await fetch(apiUrl.href);
+        const data = await res.json();
 
         catContainer.innerHTML = '';
-        data.slice(0, 2).forEach(item => {  // 再次保險，只顯示兩張
+        data.slice(0, 2).forEach(item => {
           const img = document.createElement('img');
-          img.src   = item.url;
-          img.alt   = 'cute cat';
+          img.src = item.url;
+          img.alt = 'cute cat';
           catContainer.appendChild(img);
         });
       } catch (err) {
