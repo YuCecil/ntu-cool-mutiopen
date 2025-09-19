@@ -77,8 +77,8 @@
       <option value="/discussion_topics">討論</option>
       <option value="/quizzes">測驗</option>
       <option value="/settings">設定</option>
-      <option value="/settings/configurations#tab-details">設定‑詳細資訊</option>
-      <option value="/settings/configurations#tab-sections">設定‑班別</option>
+      <option value="/settings/configurations#tab-details">設定-詳細資訊</option>
+      <option value="/settings/configurations#tab-sections">設定-班別</option>
       <option value="custom">自行貼上後綴</option>
     </optgroup>
     <optgroup label="➤ 學號搜尋（只需學號或 email）">
@@ -89,6 +89,7 @@
 
   <br />
   <button id="openBtn">一鍵開啟所有連結</button>
+  <button id="openRawBtn">直接開啟貼上的網址（不限 COOL）</button>
 
   <!-- 貓貓生成器 -->
   <button id="catBtn">萌貓貓來兩張</button>
@@ -103,6 +104,7 @@
       customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
     });
 
+    // === 原本 COOL 專用開啟功能 ===
     document.getElementById('openBtn').addEventListener('click', () => {
       const raw = urlList.value;
       let suffix = suffixSelect.value;
@@ -150,7 +152,37 @@
       });
     });
 
-    // 萌貓貓生成器
+    // === 新增：直接開啟貼上的任意網址（不限 COOL） ===
+    document.getElementById('openRawBtn').addEventListener('click', () => {
+      const raw = urlList.value;
+      if (!raw.trim()) {
+        alert('請輸入至少一筆網址');
+        return;
+      }
+
+      const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      let opened = 0;
+
+      entries.forEach((u, i) => {
+        let urlStr = u;
+        try {
+          if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(urlStr)) {
+            urlStr = 'https://' + urlStr.replace(/^\/+/, '');
+          }
+          const urlObj = new URL(urlStr);
+          setTimeout(() => { window.open(urlObj.href, '_blank'); }, i * 500);
+          opened++;
+        } catch (_) {
+          // 無效網址略過
+        }
+      });
+
+      if (opened === 0) {
+        alert('沒有找到可開啟的有效網址');
+      }
+    });
+
+    // === 萌貓貓生成器 ===
     const catBtn = document.getElementById('catBtn');
     const catContainer = document.getElementById('catContainer');
 
@@ -179,3 +211,6 @@
   </script>
 </body>
 </html>
+
+</html>
+
