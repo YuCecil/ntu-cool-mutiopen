@@ -193,16 +193,6 @@
       border-color: #9ca3af;
     }
 
-    /* === 狀態顯示區 (保留此功能) === */
-    .status-bar {
-      margin-top: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--primary-color);
-      min-height: 1.4em; /* 預留高度避免跳動 */
-      font-weight: 500;
-    }
-
     /* === RWD === */
     @media (max-width: 480px) {
       .container {
@@ -265,9 +255,6 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
         直接開啟網址
       </button>
     </div>
-
-    <!-- 狀態顯示區 -->
-    <div id="statusMsg" class="status-bar"></div>
   </div>
 
   <script>
@@ -277,9 +264,8 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
     const openBtn      = document.getElementById('openBtn');
     const openRawBtn   = document.getElementById('openRawBtn');
     const clearBtn     = document.getElementById('clearBtn');
-    const statusMsg    = document.getElementById('statusMsg');
 
-    // 切換顯示自訂輸入框 (移除了 LocalStorage 相關代碼)
+    // 切換顯示自訂輸入框
     suffixSelect.addEventListener('change', () => {
       customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
       if (suffixSelect.value === 'custom') {
@@ -297,9 +283,15 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
       }
     });
 
-    // 輔助函式：更新狀態文字 (保留此功能)
+    // 輔助函式：更新網頁標題 (不再更新頁面內的文字)
     function updateStatus(msg) {
-      statusMsg.textContent = msg;
+      if (msg) {
+        // 從訊息中提取 "1 / 5" 這樣的進度文字，顯示在分頁標題上
+        const match = msg.match(/(\d+\s*\/\s*\d+)/);
+        document.title = match ? `[${match[1]}] 處理中...` : msg;
+      } else {
+        document.title = 'NTU COOL 批量開啟工具';
+      }
     }
 
     // 輔助函式：按鈕 Loading 狀態
@@ -316,7 +308,7 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
           btn.style.opacity = '1';
           // 3秒後清除狀態訊息
           setTimeout(() => updateStatus(''), 3000);
-        }, 1000); // 延長一點 loading 時間讓使用者看清最後狀態
+        }, 1000);
       }
     }
 
@@ -332,7 +324,7 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
       }
 
       setLoading(openBtn, true);
-      updateStatus('正在解析資料...');
+      updateStatus('正在解析...');
 
       const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
 
@@ -343,13 +335,13 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
           const url = `https://cool.ntu.edu.tw/accounts/1/users?search_term=${encodeURIComponent(cleanId)}&role_filter_id=&page=`;
           setTimeout(() => { 
             window.open(url, '_blank'); 
-            // 更新進度狀態
+            // 僅更新標題
             updateStatus(`正在搜尋第 ${i + 1} / ${entries.length} 位使用者...`);
           }, i * 300);
         });
         // 設定結束狀態
         setTimeout(() => {
-          updateStatus(`已完成，共搜尋 ${entries.length} 位使用者。`);
+          updateStatus(`已完成`);
           setLoading(openBtn, false);
         }, entries.length * 300 + 500);
         return;
@@ -369,7 +361,7 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
         suffix = c;
       }
 
-      // 模式 C：一般課程網址處理 (已移除 ID 自動補全功能)
+      // 模式 C：一般課程網址處理
       const validUrls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
       
       if (!validUrls.length) { 
@@ -395,14 +387,14 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
 
         setTimeout(() => { 
           window.open(urlObj.href, '_blank');
-          // 更新進度狀態
-          updateStatus(`正在開啟第 ${i + 1} / ${validUrls.length} 個課程頁面...`);
+          // 僅更新標題
+          updateStatus(`開啟中 ${i + 1} / ${validUrls.length}`);
         }, i * 300);
       });
 
       // 設定結束狀態
       setTimeout(() => {
-        updateStatus(`已完成，共開啟 ${validUrls.length} 個分頁。`);
+        updateStatus(`已完成`);
         setLoading(openBtn, false);
       }, validUrls.length * 300 + 500);
     });
@@ -425,16 +417,15 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
       entries.forEach((u, i) => {
         let urlStr = u;
         try {
-          // 智慧修復：如果沒有 protocol，嘗試加 https
           if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(urlStr)) {
             urlStr = 'https://' + urlStr.replace(/^\/+/, '');
           }
           const urlObj = new URL(urlStr);
           
           setTimeout(() => { 
-            window.open(urlObj.href, '_blank'); 
-            // 更新進度狀態
-            updateStatus(`開啟中：${i + 1} / ${entries.length}`);
+            window.open(urlObj.href, '_blank');
+            // 僅更新標題
+            updateStatus(`開啟中 ${i + 1} / ${entries.length}`);
           }, i * 300);
           openedCount++;
         } catch (_) {}
@@ -445,7 +436,7 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
           alert('無法識別有效的網址，請檢查輸入內容。');
           updateStatus('');
         } else {
-          updateStatus(`全部完成！共開啟 ${openedCount} 個網址。`);
+          updateStatus(`全部完成`);
         }
         setLoading(openRawBtn, false);
       }, entries.length * 300 + 500);
@@ -453,3 +444,4 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
   </script>
 </body>
 </html>
+
