@@ -1,447 +1,508 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NTU COOL 批量開啟工具</title>
-  <style>
-    /* === 基礎重置與變數 === */
-    :root {
-      /* 成熟琥珀金風格 */
-      --primary-color: #a87b00; 
-      --primary-hover: #8a6500;
-      --accent-color: #52525b; /* 點綴深灰 */
-      --bg-color: #faf9f6; /* 暖米白背景 */
-      --card-bg: #ffffff;
-      --text-main: #2b261b; /* 暖黑色 */
-      --text-sub: #706b60; /* 暖灰色 */
-      --border-color: #d6d3cd;
-      --radius: 8px;
-      --shadow: 0 4px 6px -1px rgba(60, 50, 30, 0.1), 0 2px 4px -1px rgba(60, 50, 30, 0.06);
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTU COOL 批量開啟工具</title>
+    <style>
+        /* === 基礎重置與變數 === */
+        :root {
+            /* 成熟琥珀金風格 */
+            --primary-color: #a87b00;
+            --primary-hover: #8a6500;
+            --accent-color: #52525b;
+            /* 點綴深灰 */
+            --bg-color: #faf9f6;
+            /* 暖米白背景 */
+            --card-bg: #ffffff;
+            --text-main: #2b261b;
+            /* 暖黑色 */
+            --text-sub: #706b60;
+            /* 暖灰色 */
+            --border-color: #d6d3cd;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(60, 50, 30, 0.1), 0 2px 4px -1px rgba(60, 50, 30, 0.06);
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-    /* === 主容器卡片 === */
-    .container {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 600px;
-      padding: 2.5rem;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border-top: 4px solid var(--primary-color);
-      position: relative;
-    }
+        /* === 主容器卡片 === */
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-color);
+            position: relative;
+        }
 
-    /* === 標題區域 === */
-    .header {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+        /* === 標題區域 === */
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
 
-    .header h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
+        .header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
 
-    /* === 表單元件 === */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
+        /* === 表單元件 === */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-    /* 標籤列 (含清除按鈕) */
-    .label-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
+        /* 標籤列 (含清除按鈕) */
+        .label-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
 
-    label {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      margin: 0;
-    }
+        label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 0;
+        }
 
-    .hint {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-left: 0.5rem;
-      font-weight: normal;
-    }
+        .hint {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-left: 0.5rem;
+            font-weight: normal;
+        }
 
-    /* 清除按鈕樣式 */
-    .clear-btn {
-      background: none;
-      border: none;
-      color: var(--text-sub);
-      font-size: 0.85rem;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 4px;
-      transition: all 0.2s;
-      text-decoration: underline;
-      text-decoration-color: transparent; /* 預設不顯示底線 */
-    }
+        /* 清除按鈕樣式 */
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            /* 預設不顯示底線 */
+        }
 
-    .clear-btn:hover {
-      color: #b91c1c; /* 滑入時變為深紅色提醒 */
-      background-color: #fee2e2;
-      text-decoration-color: #b91c1c;
-    }
+        .clear-btn:hover {
+            color: #b91c1c;
+            /* 滑入時變為深紅色提醒 */
+            background-color: #fee2e2;
+            text-decoration-color: #b91c1c;
+        }
 
-    textarea, select, input[type="text"] {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      font-size: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      background-color: #fff;
-      font-family: inherit;
-    }
+        textarea,
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fff;
+            font-family: inherit;
+        }
 
-    textarea {
-      height: 150px;
-      resize: vertical;
-      line-height: 1.5;
-    }
+        textarea {
+            height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
 
-    /* 設定 placeholder 顏色更淡 */
-    ::placeholder {
-      color: #bbbbbb;
-      opacity: 1;
-    }
+        /* 設定 placeholder 顏色更淡 */
+        ::placeholder {
+            color: #bbbbbb;
+            opacity: 1;
+        }
 
-    /* Focus 狀態 */
-    textarea:focus, select:focus, input[type="text"]:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(168, 123, 0, 0.15);
-    }
+        /* Focus 狀態 */
+        textarea:focus,
+        select:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(168, 123, 0, 0.15);
+        }
 
-    #customSuffixInput {
-      display: none;
-      margin-top: 0.75rem;
-      border-left: 4px solid var(--accent-color);
-    }
+        #customSuffixInput {
+            display: none;
+            margin-top: 0.75rem;
+            border-left: 4px solid var(--accent-color);
+        }
 
-    /* === 按鈕區域 === */
-    .actions {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
+        /* === 選項核取方塊 (新增) === */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            padding: 0.5rem 0;
+        }
 
-    button.main-btn, button.sub-btn {
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            width: auto;
+            /* 覆寫上面的 width: 100% */
+        }
 
-    /* 主要按鈕 */
-    #openBtn {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-    }
+        .checkbox-group label {
+            font-weight: normal;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
 
-    #openBtn:hover {
-      background-color: var(--primary-hover);
-      transform: translateY(-1px);
-    }
+        .warning-text {
+            color: #b91c1c;
+            font-size: 0.8rem;
+            display: block;
+            /* 改為區塊顯示以換行 */
+            margin-top: 0.25rem;
+            margin-left: 1.6rem;
+            /* 縮排對齊文字 */
+            line-height: 1.4;
+        }
 
-    #openBtn:active {
-      transform: translateY(0);
-    }
+        /* === 按鈕區域 === */
+        .actions {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
 
-    /* 次要按鈕 */
-    #openRawBtn {
-      background-color: transparent;
-      color: var(--text-sub);
-      border: 1px solid var(--border-color);
-    }
+        button.main-btn,
+        button.sub-btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    #openRawBtn:hover {
-      background-color: #f9fafb;
-      color: var(--text-main);
-      border-color: #9ca3af;
-    }
+        /* 主要按鈕 */
+        #openBtn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
 
-    /* === RWD === */
-    @media (max-width: 480px) {
-      .container {
-        padding: 1.5rem;
-      }
-      .actions {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+        #openBtn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        #openBtn:active {
+            transform: translateY(0);
+        }
+
+        /* 次要按鈕 */
+        #openRawBtn {
+            background-color: transparent;
+            color: var(--text-sub);
+            border: 1px solid var(--border-color);
+        }
+
+        #openRawBtn:hover {
+            background-color: #f9fafb;
+            color: var(--text-main);
+            border-color: #9ca3af;
+        }
+
+        /* === RWD === */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="header">
-      <h2>NTU COOL 批量開啟工具</h2>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h2>NTU COOL 批量開啟工具</h2>
+        </div>
 
-    <div class="form-group">
-      <!-- 標題與清除按鈕放在同一列 -->
-      <div class="label-header">
-        <label for="urlList">輸入資料 <span class="hint">(每行一個網址)</span></label>
-        <button id="clearBtn" class="clear-btn" title="清除輸入框內容">清除資料</button>
-      </div>
-      
-      <textarea id="urlList" placeholder="例如：
+        <div class="form-group">
+            <!-- 標題與清除按鈕放在同一列 -->
+            <div class="label-header">
+                <label for="urlList">輸入資料 <span class="hint">(每行一個網址)</span></label>
+                <button id="clearBtn" class="clear-btn" title="清除輸入框內容">清除資料</button>
+            </div>
+
+            <textarea id="urlList" placeholder="例如：
 https://cool.ntu.edu.tw/courses/1234
 https://cool.ntu.edu.tw/courses/5678"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="suffix">選擇欲開啟的頁面</label>
+            <select id="suffix">
+                <optgroup label="➤ 課程頁面批次開啟 (需貼上課程網址)">
+                    <option value="">課程首頁 (Home)</option>
+                    <option value="/modules">課程內容 (Modules)</option>
+                    <option value="/gradebook">成績 (Grades)</option>
+                    <option value="/users">成員 (People)</option>
+                    <option value="/assignments">作業 (Assignments)</option>
+                    <option value="/discussion_topics">討論 (Discussions)</option>
+                    <option value="/quizzes">測驗 (Quizzes)</option>
+                    <option value="/settings">設定 (Settings)</option>
+                    <option value="/settings/configurations#tab-details">設定 - 詳細資訊</option>
+                    <option value="/settings/configurations#tab-sections">設定 - 班別 (Sections)</option>
+                    <option value="custom">自訂後綴路徑...</option>
+                </optgroup>
+                <optgroup label="➤ 成員搜尋 (需貼上學號/Email)">
+                    <option value="search-users">搜尋使用者 (Admin Search)</option>
+                </optgroup>
+            </select>
+
+            <input type="text" id="customSuffixInput" placeholder="輸入自訂後綴 (例如 /files)" />
+        </div>
+
+        <!-- 極速模式選項 -->
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="fastMode">
+                <label for="fastMode">極速模式 (無延遲開啟)</label>
+            </div>
+            <div class="warning-text">※建議用於分頁數不多的情況，不建議使用於開大量Google Workspace相關網站</div>
+        </div>
+
+        <div class="actions">
+            <button id="openBtn" class="main-btn">
+                執行批次開啟
+            </button>
+            <button id="openRawBtn" class="sub-btn" title="忽略選單設定，直接開啟上方網址">
+                直接開啟網址
+            </button>
+        </div>
     </div>
 
-    <div class="form-group">
-      <label for="suffix">選擇欲開啟的頁面</label>
-      <select id="suffix">
-        <optgroup label="➤ 課程頁面批次開啟 (需貼上課程網址)">
-          <option value="">課程首頁 (Home)</option>
-          <option value="/modules">課程內容 (Modules)</option>
-          <option value="/gradebook">成績 (Grades)</option>
-          <option value="/users">成員 (People)</option>
-          <option value="/assignments">作業 (Assignments)</option>
-          <option value="/discussion_topics">討論 (Discussions)</option>
-          <option value="/quizzes">測驗 (Quizzes)</option>
-          <option value="/settings">設定 (Settings)</option>
-          <option value="/settings/configurations#tab-details">設定 - 詳細資訊</option>
-          <option value="/settings/configurations#tab-sections">設定 - 班別 (Sections)</option>
-          <option value="custom">自訂後綴路徑...</option>
-        </optgroup>
-        <optgroup label="➤ 成員搜尋 (需貼上學號/Email)">
-          <option value="search-users">搜尋使用者 (Admin Search)</option>
-        </optgroup>
-      </select>
-      
-      <input type="text" id="customSuffixInput" placeholder="輸入自訂後綴 (例如 /files)" />
-    </div>
+    <script>
+        const suffixSelect = document.getElementById('suffix');
+        const customInput = document.getElementById('customSuffixInput');
+        const urlList = document.getElementById('urlList');
+        const openBtn = document.getElementById('openBtn');
+        const openRawBtn = document.getElementById('openRawBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const fastMode = document.getElementById('fastMode'); // 新增
 
-    <div class="actions">
-      <button id="openBtn" class="main-btn">
-        執行批次開啟
-      </button>
-      <button id="openRawBtn" class="sub-btn" title="忽略選單設定，直接開啟上方網址">
-        直接開啟網址
-      </button>
-    </div>
-  </div>
-
-  <script>
-    const suffixSelect = document.getElementById('suffix');
-    const customInput  = document.getElementById('customSuffixInput');
-    const urlList      = document.getElementById('urlList');
-    const openBtn      = document.getElementById('openBtn');
-    const openRawBtn   = document.getElementById('openRawBtn');
-    const clearBtn     = document.getElementById('clearBtn');
-
-    // 切換顯示自訂輸入框
-    suffixSelect.addEventListener('change', () => {
-      customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
-      if (suffixSelect.value === 'custom') {
-        customInput.focus();
-      }
-    });
-
-    // === 清除資料功能 ===
-    clearBtn.addEventListener('click', () => {
-      if (!urlList.value.trim()) return; 
-      if (confirm('確定要清除所有輸入的資料嗎？')) {
-        urlList.value = '';
-        urlList.focus();
-        updateStatus('');
-      }
-    });
-
-    // 輔助函式：更新網頁標題 (不再更新頁面內的文字)
-    function updateStatus(msg) {
-      if (msg) {
-        // 從訊息中提取 "1 / 5" 這樣的進度文字，顯示在分頁標題上
-        const match = msg.match(/(\d+\s*\/\s*\d+)/);
-        document.title = match ? `[${match[1]}] 處理中...` : msg;
-      } else {
-        document.title = 'NTU COOL 批量開啟工具';
-      }
-    }
-
-    // 輔助函式：按鈕 Loading 狀態
-    function setLoading(btn, isLoading) {
-      if (isLoading) {
-        btn.dataset.originalText = btn.innerText;
-        btn.innerText = '處理中...';
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-      } else {
-        setTimeout(() => {
-          btn.innerText = btn.dataset.originalText;
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          // 3秒後清除狀態訊息
-          setTimeout(() => updateStatus(''), 3000);
-        }, 1000);
-      }
-    }
-
-    // === 主要功能：智慧判斷並開啟 ===
-    openBtn.addEventListener('click', () => {
-      const raw = urlList.value;
-      let suffix = suffixSelect.value;
-
-      if (!raw.trim()) {
-        alert('請先輸入資料');
-        urlList.focus();
-        return;
-      }
-
-      setLoading(openBtn, true);
-      updateStatus('正在解析...');
-
-      const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
-
-      // 模式 A：搜尋學號
-      if (suffix === 'search-users') {
-        entries.forEach((id, i) => {
-          const cleanId = id.includes('@') ? id.split('@')[0] : id;
-          const url = `https://cool.ntu.edu.tw/accounts/1/users?search_term=${encodeURIComponent(cleanId)}&role_filter_id=&page=`;
-          setTimeout(() => { 
-            window.open(url, '_blank'); 
-            // 僅更新標題
-            updateStatus(`正在搜尋第 ${i + 1} / ${entries.length} 位使用者...`);
-          }, i * 300);
+        // 切換顯示自訂輸入框
+        suffixSelect.addEventListener('change', () => {
+            customInput.style.display = suffixSelect.value === 'custom' ? 'block' : 'none';
+            if (suffixSelect.value === 'custom') {
+                customInput.focus();
+            }
         });
-        // 設定結束狀態
-        setTimeout(() => {
-          updateStatus(`已完成`);
-          setLoading(openBtn, false);
-        }, entries.length * 300 + 500);
-        return;
-      }
 
-      // 模式 B：自訂後綴
-      if (suffix === 'custom') {
-        let c = customInput.value.trim();
-        if (!c) { 
-          alert('請輸入自訂後綴內容'); 
-          customInput.focus();
-          setLoading(openBtn, false);
-          updateStatus('');
-          return; 
-        }
-        if (!c.startsWith('/') && !c.startsWith('#')) c = '/' + c;
-        suffix = c;
-      }
+        // === 清除資料功能 ===
+        clearBtn.addEventListener('click', () => {
+            if (!urlList.value.trim()) return;
+            if (confirm('確定要清除所有輸入的資料嗎？')) {
+                urlList.value = '';
+                urlList.focus();
+                updateStatus('');
+            }
+        });
 
-      // 模式 C：一般課程網址處理
-      const validUrls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
-      
-      if (!validUrls.length) { 
-        alert('未偵測到有效的 COOL 課程連結。\n若要開啟非課程連結，請使用右下角的「直接開啟網址」。'); 
-        setLoading(openBtn, false);
-        updateStatus('');
-        return; 
-      }
-
-      validUrls.forEach((u, i) => {
-        let urlObj;
-        try { 
-          urlObj = new URL(u.startsWith('http') ? u : 'https://' + u); 
-        } catch { return; }
-
-        if (suffix.includes('#')) {
-          const [pathSuffix, frag] = suffix.split('#');
-          urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + (pathSuffix || '');
-          urlObj.hash = '#' + frag;
-        } else {
-          urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + suffix;
+        // 輔助函式：更新網頁標題
+        function updateStatus(msg) {
+            if (msg) {
+                const match = msg.match(/(\d+\s*\/\s*\d+)/);
+                document.title = match ? `[${match[1]}] 處理中...` : msg;
+            } else {
+                document.title = 'NTU COOL 批量開啟工具';
+            }
         }
 
-        setTimeout(() => { 
-          window.open(urlObj.href, '_blank');
-          // 僅更新標題
-          updateStatus(`開啟中 ${i + 1} / ${validUrls.length}`);
-        }, i * 300);
-      });
-
-      // 設定結束狀態
-      setTimeout(() => {
-        updateStatus(`已完成`);
-        setLoading(openBtn, false);
-      }, validUrls.length * 300 + 500);
-    });
-
-    // === 次要功能：直接開啟原始連結 ===
-    openRawBtn.addEventListener('click', () => {
-      const raw = urlList.value;
-      if (!raw.trim()) {
-        alert('請先輸入網址');
-        urlList.focus();
-        return;
-      }
-
-      setLoading(openRawBtn, true);
-      updateStatus('準備開啟...');
-
-      const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
-      let openedCount = 0;
-
-      entries.forEach((u, i) => {
-        let urlStr = u;
-        try {
-          if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(urlStr)) {
-            urlStr = 'https://' + urlStr.replace(/^\/+/, '');
-          }
-          const urlObj = new URL(urlStr);
-          
-          setTimeout(() => { 
-            window.open(urlObj.href, '_blank');
-            // 僅更新標題
-            updateStatus(`開啟中 ${i + 1} / ${entries.length}`);
-          }, i * 300);
-          openedCount++;
-        } catch (_) {}
-      });
-
-      setTimeout(() => {
-        if (openedCount === 0) {
-          alert('無法識別有效的網址，請檢查輸入內容。');
-          updateStatus('');
-        } else {
-          updateStatus(`全部完成`);
+        // 輔助函式：按鈕 Loading 狀態
+        function setLoading(btn, isLoading) {
+            if (isLoading) {
+                btn.dataset.originalText = btn.innerText;
+                btn.innerText = '處理中...';
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+            } else {
+                setTimeout(() => {
+                    btn.innerText = btn.dataset.originalText;
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    // 3秒後清除狀態訊息
+                    setTimeout(() => updateStatus(''), 3000);
+                }, 1000);
+            }
         }
-        setLoading(openRawBtn, false);
-      }, entries.length * 300 + 500);
-    });
-  </script>
+
+        // 取得延遲時間 (極速模式為 0，否則為 300ms)
+        function getDelay() {
+            return fastMode.checked ? 0 : 300;
+        }
+
+        // === 主要功能：智慧判斷並開啟 ===
+        openBtn.addEventListener('click', () => {
+            const raw = urlList.value;
+            let suffix = suffixSelect.value;
+            const delay = getDelay(); // 取得延遲設定
+
+            if (!raw.trim()) {
+                alert('請先輸入資料');
+                urlList.focus();
+                return;
+            }
+
+            setLoading(openBtn, true);
+            updateStatus('正在解析...');
+
+            const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+
+            // 模式 A：搜尋學號
+            if (suffix === 'search-users') {
+                entries.forEach((id, i) => {
+                    const cleanId = id.includes('@') ? id.split('@')[0] : id;
+                    const url = `https://cool.ntu.edu.tw/accounts/1/users?search_term=${encodeURIComponent(cleanId)}&role_filter_id=&page=`;
+                    setTimeout(() => {
+                        window.open(url, '_blank');
+                        updateStatus(`正在搜尋第 ${i + 1} / ${entries.length} 位使用者...`);
+                    }, i * delay);
+                });
+
+                setTimeout(() => {
+                    updateStatus(`已完成`);
+                    setLoading(openBtn, false);
+                }, entries.length * delay + 500);
+                return;
+            }
+
+            // 模式 B：自訂後綴
+            if (suffix === 'custom') {
+                let c = customInput.value.trim();
+                if (!c) {
+                    alert('請輸入自訂後綴內容');
+                    customInput.focus();
+                    setLoading(openBtn, false);
+                    updateStatus('');
+                    return;
+                }
+                if (!c.startsWith('/') && !c.startsWith('#')) c = '/' + c;
+                suffix = c;
+            }
+
+            // 模式 C：一般課程網址處理
+            const validUrls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
+
+            if (!validUrls.length) {
+                alert('未偵測到有效的 COOL 課程連結。\n若要開啟非課程連結，請使用右下角的「直接開啟網址」。');
+                setLoading(openBtn, false);
+                updateStatus('');
+                return;
+            }
+
+            validUrls.forEach((u, i) => {
+                let urlObj;
+                try {
+                    urlObj = new URL(u.startsWith('http') ? u : 'https://' + u);
+                } catch { return; }
+
+                if (suffix.includes('#')) {
+                    const [pathSuffix, frag] = suffix.split('#');
+                    urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + (pathSuffix || '');
+                    urlObj.hash = '#' + frag;
+                } else {
+                    urlObj.pathname = urlObj.pathname.replace(/\/+$/, '') + suffix;
+                }
+
+                setTimeout(() => {
+                    window.open(urlObj.href, '_blank');
+                    updateStatus(`開啟中 ${i + 1} / ${validUrls.length}`);
+                }, i * delay);
+            });
+
+            setTimeout(() => {
+                updateStatus(`已完成`);
+                setLoading(openBtn, false);
+            }, validUrls.length * delay + 500);
+        });
+
+        // === 次要功能：直接開啟原始連結 ===
+        openRawBtn.addEventListener('click', () => {
+            const raw = urlList.value;
+            const delay = getDelay(); // 取得延遲設定
+
+            if (!raw.trim()) {
+                alert('請先輸入網址');
+                urlList.focus();
+                return;
+            }
+
+            setLoading(openRawBtn, true);
+            updateStatus('準備開啟...');
+
+            const entries = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            let openedCount = 0;
+
+            entries.forEach((u, i) => {
+                let urlStr = u;
+                try {
+                    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(urlStr)) {
+                        urlStr = 'https://' + urlStr.replace(/^\/+/, '');
+                    }
+                    const urlObj = new URL(urlStr);
+
+                    setTimeout(() => {
+                        window.open(urlObj.href, '_blank');
+                        updateStatus(`開啟中 ${i + 1} / ${entries.length}`);
+                    }, i * delay);
+                    openedCount++;
+                } catch (_) { }
+            });
+
+            setTimeout(() => {
+                if (openedCount === 0) {
+                    alert('無法識別有效的網址，請檢查輸入內容。');
+                    updateStatus('');
+                } else {
+                    updateStatus(`全部完成`);
+                }
+                setLoading(openRawBtn, false);
+            }, entries.length * delay + 500);
+        });
+    </script>
 </body>
-</html>
 
+</html>
