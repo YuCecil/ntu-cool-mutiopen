@@ -5,249 +5,328 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NTU COOL 批量開啟工具</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        /* === 基礎重置與變數 === */
+        /* === CSS 變數（對齊 TAICA 設計語言）=== */
         :root {
-            /* 成熟琥珀金風格 */
-            --primary-color: #a87b00;
-            --primary-hover: #8a6500;
-            --accent-color: #52525b;
-            /* 點綴深灰 */
-            --bg-color: #faf9f6;
-            /* 暖米白背景 */
-            --card-bg: #ffffff;
-            --text-main: #2b261b;
-            /* 暖黑色 */
-            --text-sub: #706b60;
-            /* 暖灰色 */
-            --border-color: #d6d3cd;
-            --radius: 8px;
-            --shadow: 0 4px 6px -1px rgba(60, 50, 30, 0.1), 0 2px 4px -1px rgba(60, 50, 30, 0.06);
+            --bg:      #e8e3d8;
+            --bg2:     #f6f3ee;
+            --bg3:     #ede9e0;
+            --bg4:     #d5cec2;
+            --border:  rgba(50, 32, 10, 0.10);
+            --border2: rgba(50, 32, 10, 0.18);
+            --t1: #1c1812;
+            --t2: #6b5e4e;
+            --t3: #a8967e;
+            --cyan:      #2a4faa;
+            --cyan-dim:  rgba(42, 79, 170, 0.08);
+            --cyan-glow: rgba(42, 79, 170, 0.18);
+            --amber:     #c24128;
+            --amber-dim: rgba(194, 65, 40, 0.08);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg);
+            color: var(--t1);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            padding: 48px 20px 60px;
         }
 
-        /* === 主容器卡片 === */
+        /* === 主容器 === */
         .container {
-            background: var(--card-bg);
+            background: var(--bg2);
             width: 100%;
-            max-width: 600px;
-            padding: 2.5rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border-top: 4px solid var(--primary-color);
-            position: relative;
+            max-width: 580px;
+            border-radius: 10px;
+            border: 1px solid var(--border2);
+            box-shadow:
+                0 1px 3px rgba(50, 32, 10, 0.07),
+                0 10px 30px rgba(50, 32, 10, 0.07);
+            overflow: hidden;
         }
 
-        /* === 標題區域 === */
+        /* 頂部色帶（對齊 TAICA header stripe）*/
+        .top-stripe {
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyan) 0%, #3a6fd8 45%, var(--amber) 100%);
+            flex-shrink: 0;
+        }
+
+        /* === 標題區 === */
         .header {
-            margin-bottom: 2rem;
-            text-align: center;
+            padding: 26px 32px 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1.55rem;
+            font-weight: 400;
+            color: var(--cyan);
+            letter-spacing: -0.01em;
         }
 
-        /* === 表單元件 === */
+        .header-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            color: var(--t3);
+            margin-top: 5px;
+        }
+
+        /* === 表單本體 === */
+        .form-body {
+            padding: 24px 32px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* === 表單群組 === */
         .form-group {
-            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
 
-        /* 標籤列 (含清除按鈕) */
         .label-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
         }
 
         label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
             font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            margin: 0;
+            letter-spacing: 0.12em;
+            color: var(--t2);
+            text-transform: uppercase;
         }
 
         .hint {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            margin-left: 0.5rem;
-            font-weight: normal;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 11px;
+            color: var(--t3);
+            letter-spacing: 0;
+            font-weight: 400;
+            text-transform: none;
+            margin-left: 4px;
         }
 
-        /* 清除按鈕樣式 */
+        /* 清除按鈕 */
         .clear-btn {
             background: none;
             border: none;
-            color: var(--text-sub);
-            font-size: 0.85rem;
+            color: var(--t3);
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.06em;
             cursor: pointer;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
-            transition: all 0.2s;
-            text-decoration: underline;
-            text-decoration-color: transparent;
-            /* 預設不顯示底線 */
+            transition: color 0.15s, background 0.15s;
         }
 
         .clear-btn:hover {
-            color: #b91c1c;
-            /* 滑入時變為深紅色提醒 */
-            background-color: #fee2e2;
-            text-decoration-color: #b91c1c;
+            color: var(--amber);
+            background-color: var(--amber-dim);
         }
 
+        /* 輸入元件 */
         textarea,
         select,
         input[type="text"] {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #fff;
-            font-family: inherit;
+            padding: 10px 12px;
+            border: 1px solid var(--border2);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg3);
+            color: var(--t1);
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         textarea {
-            height: 150px;
+            height: 148px;
             resize: vertical;
-            line-height: 1.5;
+            line-height: 1.65;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
         }
 
-        /* 設定 placeholder 顏色更淡 */
         ::placeholder {
-            color: #bbbbbb;
+            color: var(--t3);
             opacity: 1;
         }
 
-        /* Focus 狀態 */
         textarea:focus,
         select:focus,
         input[type="text"]:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(168, 123, 0, 0.15);
+            border-color: var(--cyan);
+            background-color: var(--bg2);
+            box-shadow: 0 0 0 3px var(--cyan-glow);
+        }
+
+        /* Select 自訂箭頭 */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8967e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+            cursor: pointer;
         }
 
         #customSuffixInput {
             display: none;
-            margin-top: 0.75rem;
-            border-left: 4px solid var(--accent-color);
+            margin-top: 8px;
+            border-left: 3px solid var(--cyan);
+            border-radius: 0 6px 6px 0;
+            background: var(--cyan-dim);
         }
 
-        /* === 選項核取方塊 (新增) === */
+        /* 核取方塊群組 */
         .checkbox-group {
             display: flex;
             align-items: center;
-            margin-bottom: 0;
-            padding: 0.5rem 0;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .checkbox-group:hover {
+            border-color: var(--border2);
+            background: var(--bg4);
         }
 
         .checkbox-group input[type="checkbox"] {
-            margin-right: 0.5rem;
-            accent-color: var(--primary-color);
+            accent-color: var(--cyan);
             cursor: pointer;
-            width: auto;
-            /* 覆寫上面的 width: 100% */
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
         }
 
         .checkbox-group label {
-            font-weight: normal;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--t1);
             cursor: pointer;
-            font-size: 0.95rem;
-            color: var(--text-main);
+            text-transform: none;
+            letter-spacing: 0;
         }
 
         .warning-text {
-            color: #b91c1c;
-            font-size: 0.8rem;
-            display: block;
-            /* 改為區塊顯示以換行 */
-            margin-top: 0.25rem;
-            margin-left: 1.6rem;
-            /* 縮排對齊文字 */
-            line-height: 1.4;
+            font-size: 11px;
+            color: var(--t3);
+            line-height: 1.6;
+            padding-left: 2px;
         }
 
-        /* === 按鈕區域 === */
+        /* 分隔線 */
+        .divider {
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* === 按鈕區 === */
         .actions {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 10px;
         }
 
         button.main-btn,
         button.sub-btn {
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 11px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Noto Sans TC', sans-serif;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.18s cubic-bezier(.34, 1.4, .64, 1);
             display: flex;
             justify-content: center;
             align-items: center;
+            letter-spacing: 0.03em;
         }
 
-        /* 主要按鈕 */
         #openBtn {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--cyan);
+            color: #fff;
             border: none;
+            box-shadow: 0 1px 3px rgba(42, 79, 170, 0.20);
         }
 
-        #openBtn:hover {
-            background-color: var(--primary-hover);
+        #openBtn:hover:not(:disabled) {
+            background-color: #1e3d8f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(42, 79, 170, 0.28);
+        }
+
+        #openBtn:active:not(:disabled) { transform: translateY(0); }
+
+        #openBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #openRawBtn {
+            background-color: transparent;
+            color: var(--t2);
+            border: 1px solid var(--border2);
+        }
+
+        #openRawBtn:hover:not(:disabled) {
+            background-color: var(--bg3);
+            color: var(--t1);
+            border-color: var(--t3);
             transform: translateY(-1px);
         }
 
-        #openBtn:active {
-            transform: translateY(0);
+        #openRawBtn:active:not(:disabled) { transform: translateY(0); }
+
+        #openRawBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        /* 次要按鈕 */
-        #openRawBtn {
-            background-color: transparent;
-            color: var(--text-sub);
-            border: 1px solid var(--border-color);
-        }
-
-        #openRawBtn:hover {
-            background-color: #f9fafb;
-            color: var(--text-main);
-            border-color: #9ca3af;
+        /* === 頁尾 === */
+        .footer {
+            padding: 11px 32px 14px;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--t3);
+            letter-spacing: 0.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         /* === RWD === */
         @media (max-width: 480px) {
-            .container {
-                padding: 1.5rem;
-            }
-
-            .actions {
-                grid-template-columns: 1fr;
-            }
+            body { padding: 20px 12px 40px; }
+            .header  { padding: 20px 20px 16px; }
+            .form-body { padding: 18px 20px 22px; }
+            .footer  { padding: 10px 20px 13px; }
+            .actions { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -255,62 +334,68 @@
 <body>
 
     <div class="container">
+        <div class="top-stripe"></div>
+
         <div class="header">
             <h2>NTU COOL 批量開啟工具</h2>
+            <div class="header-sub">BATCH URL OPENER</div>
         </div>
 
-        <div class="form-group">
-            <!-- 標題與清除按鈕放在同一列 -->
-            <div class="label-header">
-                <label for="urlList">輸入資料 <span class="hint">(每行一個網址)</span></label>
-                <button id="clearBtn" class="clear-btn" title="清除輸入框內容">清除資料</button>
-            </div>
+        <div class="form-body">
 
-            <textarea id="urlList" placeholder="例如：
+            <div class="form-group">
+                <div class="label-header">
+                    <label for="urlList">輸入資料 <span class="hint">(每行一個網址)</span></label>
+                    <button id="clearBtn" class="clear-btn" title="清除輸入框內容">清除資料</button>
+                </div>
+                <textarea id="urlList" placeholder="例如：
 https://cool.ntu.edu.tw/courses/1234
 https://cool.ntu.edu.tw/courses/5678"></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="suffix">選擇欲開啟的頁面</label>
-            <select id="suffix">
-                <optgroup label="➤ 課程頁面批次開啟 (需貼上課程網址)">
-                    <option value="">課程首頁 (Home)</option>
-                    <option value="/modules">課程內容 (Modules)</option>
-                    <option value="/gradebook">成績 (Grades)</option>
-                    <option value="/users">成員 (People)</option>
-                    <option value="/assignments">作業 (Assignments)</option>
-                    <option value="/discussion_topics">討論 (Discussions)</option>
-                    <option value="/quizzes">測驗 (Quizzes)</option>
-                    <option value="/settings">設定 (Settings)</option>
-                    <option value="/settings/configurations#tab-details">設定 - 詳細資訊</option>
-                    <option value="/settings/configurations#tab-sections">設定 - 班別 (Sections)</option>
-                    <option value="custom">自訂後綴路徑...</option>
-                </optgroup>
-                <optgroup label="➤ 成員搜尋 (需貼上學號/Email)">
-                    <option value="search-users">搜尋使用者 (Admin Search)</option>
-                </optgroup>
-            </select>
-
-            <input type="text" id="customSuffixInput" placeholder="輸入自訂後綴 (例如 /files)" />
-        </div>
-
-        <!-- 極速模式選項 -->
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" id="fastMode">
-                <label for="fastMode">快速模式 (無延遲開啟)</label>
             </div>
-            <div class="warning-text">※建議用於分頁數不多的情況，不建議使用於開大量Google Workspace相關網站</div>
+
+            <div class="form-group">
+                <label for="suffix">選擇欲開啟的頁面</label>
+                <select id="suffix">
+                    <optgroup label="➤ 課程頁面批次開啟 (需貼上課程網址)">
+                        <option value="">課程首頁 (Home)</option>
+                        <option value="/modules">課程內容 (Modules)</option>
+                        <option value="/gradebook">成績 (Grades)</option>
+                        <option value="/users">成員 (People)</option>
+                        <option value="/assignments">作業 (Assignments)</option>
+                        <option value="/discussion_topics">討論 (Discussions)</option>
+                        <option value="/quizzes">測驗 (Quizzes)</option>
+                        <option value="/settings">設定 (Settings)</option>
+                        <option value="/settings/configurations#tab-details">設定 - 詳細資訊</option>
+                        <option value="/settings/configurations#tab-sections">設定 - 班別 (Sections)</option>
+                        <option value="custom">自訂後綴路徑...</option>
+                    </optgroup>
+                    <optgroup label="➤ 成員搜尋 (需貼上學號/Email)">
+                        <option value="search-users">搜尋使用者 (Admin Search)</option>
+                    </optgroup>
+                </select>
+                <input type="text" id="customSuffixInput" placeholder="輸入自訂後綴 (例如 /files)" />
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="fastMode">
+                    <label for="fastMode">快速模式（無延遲開啟）</label>
+                </div>
+                <div class="warning-text">※ 建議用於分頁數不多的情況，不建議使用於開大量 Google Workspace 相關網站</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="actions">
+                <button id="openBtn" class="main-btn">執行批次開啟</button>
+                <button id="openRawBtn" class="sub-btn" title="忽略選單設定，直接開啟上方網址">直接開啟網址</button>
+            </div>
+
         </div>
 
-        <div class="actions">
-            <button id="openBtn" class="main-btn">
-                執行批次開啟
-            </button>
-            <button id="openRawBtn" class="sub-btn" title="忽略選單設定，直接開啟上方網址">
-                直接開啟網址
-            </button>
+        <div class="footer">
+            <span>NTU COOL · BATCH OPENER</span>
+            <span>cool.ntu.edu.tw</span>
         </div>
     </div>
 
@@ -506,4 +591,3 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
 </body>
 
 </html>
-
