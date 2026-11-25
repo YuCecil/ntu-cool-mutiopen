@@ -509,7 +509,9 @@ https://cool.ntu.edu.tw/courses/5678"></textarea>
             }
 
             // 模式 C：一般課程網址處理
-            const validUrls = entries.filter(u => u.includes('cool.ntu.edu.tw/courses/'));
+            // 正式站與測試站的課程網址都可以
+            const COOL_COURSE = /^(https?:\/\/)?(cool\.ntu\.edu\.tw|cool\.testing\.dlc\.ntu\.edu\.tw)\/courses\//;
+            const validUrls = entries.filter(u => COOL_COURSE.test(u));
 
             if (!validUrls.length) {
                 alert('未偵測到有效的 COOL 課程連結。\n若要開啟非課程連結，請使用右下角的「直接開啟網址」。');
